@@ -39,7 +39,7 @@ When you copy items, the database stores them like this:
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/yourusername/clipcapsule.git
+git clone  https://github.com/Victor-Evogor/clipcapsule.git
 cd clipcapsule
 ```
 
