@@ -1,0 +1,73 @@
+# Go
+*.exe
+*.test
+*.out
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Go build artifacts
+/build
+/bin
+/dist
+*.so
+*.dll
+*.a
+
+# Wails build artifacts
+frontend/dist/
+frontend/node_modules/
+wailsjs/
+
+# Runtime files
+.DS_Store
+*.tmp
+*.pid
+*.lock
+
+# Logs and debug
+*.log
+debug/
+*.swp
+*.swo
+
+# VSCode/JetBrains/Editor stuff
+.vscode/
+.idea/
+*.code-workspace
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# npm / yarn
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment / config
+.env
+.env.*
+.config
+*.local
+
+# Clipboard device or udev paths (if cached)
+keyboardid*
+deviceinfo*
+
+# Backup files
+*.bak
+*.old
+*~
+
+# Repomix files (AI tools)
+repomix-output.xml
+
+# Wails build folders (depending on Wails version)
+frontend/wailsjs/go/
+frontend/wailsjs/runtime/
+
+# System generated
+*.crash

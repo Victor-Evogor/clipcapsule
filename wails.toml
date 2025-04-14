@@ -1,0 +1,8 @@
+[platform.windows]
+icon = "frontend/src/assets/logo-2.png"
+
+[platform.darwin]
+icon = "frontend/src/assets/logo-2.png"
+
+[platform.linux]
+icon = "frontend/src/assets/logo-2.png"
