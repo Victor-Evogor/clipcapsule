@@ -79,8 +79,8 @@ sudo chmod a+r /dev/input/eventX
 
 ## 🛠️ Development
 
-- Frontend: Wails + JS/TS (see `runtime/`)
-- Backend: Go (see `go/main/`)
+- Frontend: Wails + JS/TS (see `frontend/`)
+- Backend: Go 
 - Clipboard access and keyboard interception handled natively
 
 ---
