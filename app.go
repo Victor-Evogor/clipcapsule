@@ -46,9 +46,10 @@ func (a *App) Greet(name string) string {
 
 func (a *App) GetHistory() []string {
 	db := &utils.Db{}
+	db.New()
 	history, err := db.FetchAllItems()
+
 	if err != nil {
-		fmt.Println("Error fetching history:", err)
 		return nil
 	}
 
