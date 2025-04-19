@@ -4,6 +4,8 @@ import (
 	"clipcapsule/utils"
 	"context"
 	"fmt"
+
+	"golang.design/x/clipboard"
 )
 
 // App struct
@@ -46,7 +48,9 @@ func (a *App) Greet(name string) string {
 
 func (a *App) GetHistory() []string {
 	db := &utils.Db{}
-	db.New()
+	if err := db.New(); err != nil {
+		panic(err)
+	}
 	history, err := db.FetchAllItems()
 
 	if err != nil {
@@ -61,10 +65,15 @@ func (a *App) GetHistory() []string {
 	return historyContents
 }
 
-func (a *App) UpdateHistory(newOrder []string) error {
+func (a *App) UpdateHistory(newOrder []string) ([]utils.ClipboardItem, error) {
 	db := utils.Db{}
 	if err := db.New(); err != nil {
-		return err
+		return nil, err
 	}
-	return db.UpdateAllItems(newOrder)
+	items := db.UpdateAllItems(newOrder)
+	if clipboard.Init() != nil {
+		panic("failed to initialize clipboard")
+	}
+	clipboard.Write(clipboard.FmtText, []byte(items[0].Content))
+	return items, nil
 }

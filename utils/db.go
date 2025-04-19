@@ -43,35 +43,48 @@ func (d *Db) createTable() error {
 	return err
 }
 
+func CopyFirstDbEntryToClipboard(d *Db) {
+
+}
+
 // UpdateAllItems replaces all clipboard items with the provided ordered texts
-func (d *Db) UpdateAllItems(texts []string) error {
+func (d *Db) UpdateAllItems(texts []string) []ClipboardItem {
 	tx, err := d.conn.Begin()
 	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
+		panic(fmt.Sprint("failed to begin transaction: %w", err))
 	}
 
 	// Clear existing records
 	if _, err := tx.Exec(`DELETE FROM clipboard_items`); err != nil {
 		tx.Rollback()
-		return fmt.Errorf("failed to clear clipboard_items: %w", err)
+		panic(fmt.Sprint("failed to clear clipboard_items: %w", err))
 	}
 
 	// Insert all new items in order
 	stmt, err := tx.Prepare(`INSERT INTO clipboard_items (content, position) VALUES (?, ?)`)
 	if err != nil {
 		tx.Rollback()
-		return fmt.Errorf("failed to prepare insert: %w", err)
+		panic(fmt.Sprint("failed to prepare insert: %w", err))
 	}
 	defer stmt.Close()
 
 	for i, text := range texts {
 		if _, err := stmt.Exec(text, i); err != nil {
 			tx.Rollback()
-			return fmt.Errorf("failed to insert item %d: %w", i, err)
+			panic(fmt.Sprint("failed to insert item %d: %w", i, err))
 		}
 	}
 
-	return tx.Commit()
+	if tx.Commit() != nil {
+		panic("Failed to commit transaction")
+	}
+
+	items, err := d.FetchAllItems()
+	if err != nil {
+		panic(err)
+	}
+
+	return items
 }
 
 // Optional: FetchAllItems returns all clipboard items in order

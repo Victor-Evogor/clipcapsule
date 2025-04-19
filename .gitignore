@@ -71,3 +71,6 @@ frontend/wailsjs/runtime/
 
 # System generated
 *.crash
+
+
+frontend/vite.config.ts.timestamp-1745062894951.mjs

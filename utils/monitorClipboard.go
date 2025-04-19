@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"log"
 	"strconv"
 
@@ -30,6 +31,9 @@ func MonitorKeyboardGlobal() {
 		log.Fatal(err)
 	}
 
+	// Start the clipboard monitoring in a separate goroutine
+	go MonitorClipboardChanges(&db)
+
 	for event := range keyLogger.Read() {
 		key := event.KeyString()
 
@@ -43,33 +47,6 @@ func MonitorKeyboardGlobal() {
 
 			isCtrl := keysPressed["L_CTRL"] || keysPressed["R_CTRL"]
 			isShift := keysPressed["L_SHIFT"] || keysPressed["R_SHIFT"]
-
-			// Handle Ctrl+C
-			if isCtrl && keysPressed["C"] {
-				clipboardText := string(clipboard.Read(clipboard.FmtText))
-				if clipboardText != "" {
-					items, err := db.FetchAllItems()
-					if err != nil {
-						log.Println("Error fetching items:", err)
-						continue
-					}
-
-					newList := []string{clipboardText}
-					for _, item := range items {
-						if item.Content != clipboardText {
-							newList = append(newList, item.Content)
-						}
-					}
-
-					err = db.UpdateAllItems(newList)
-					if err != nil {
-						log.Println("Failed to update clipboard history:", err)
-					} else {
-						log.Println("Copied text saved at position 1:", clipboardText)
-						clipboard.Write(clipboard.FmtText, []byte(clipboardText)) // ensure it's still the current clipboard
-					}
-				}
-			}
 
 			// Handle Ctrl + Shift + [1-9]
 			if isCtrl && isShift {
@@ -94,16 +71,63 @@ func MonitorKeyboardGlobal() {
 							}
 						}
 
-						err = db.UpdateAllItems(newList)
-						if err != nil {
-							log.Println("Failed to move item to position 1:", err)
-						} else {
-							log.Printf("Moved #%d item to top: %s\n", i, selected)
-							clipboard.Write(clipboard.FmtText, []byte(selected)) // set new #1 as clipboard
-						}
+						db.UpdateAllItems(newList)
+
+						clipboard.Write(clipboard.FmtText, []byte(selected)) // set new #1 as clipboard
 					}
 				}
 			}
+
 		}
 	}
+}
+
+// MonitorClipboardChanges watches for any changes to the clipboard content
+func MonitorClipboardChanges(db *Db) {
+	// Create a channel to receive clipboard change notifications
+	ch := clipboard.Watch(context.Background(), clipboard.FmtText)
+
+	var lastContent string
+
+	for data := range ch {
+		clipboardText := string(data)
+
+		// Skip if clipboard is empty or same as last content
+		if clipboardText == "" || clipboardText == lastContent {
+			continue
+		}
+
+		log.Printf("Clipboard changed, new content: %s", clipboardText[:min(20, len(clipboardText))])
+		lastContent = clipboardText
+
+		// Update database
+		items, err := db.FetchAllItems()
+		if err != nil {
+			log.Println("Error fetching items:", err)
+			continue
+		}
+
+		// Check if content already at position 1
+		if len(items) > 0 && items[0].Content == clipboardText {
+			log.Println("Content already at top position, no update needed")
+			continue
+		}
+
+		newList := []string{clipboardText}
+		for _, item := range items {
+			if item.Content != clipboardText {
+				newList = append(newList, item.Content)
+			}
+		}
+
+		db.UpdateAllItems(newList)
+	}
+}
+
+// Helper function for string length limiting
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
