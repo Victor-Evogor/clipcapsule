@@ -57,7 +57,7 @@ func (a *App) GetHistory() []string {
 		return nil
 	}
 
-	var historyContents []string
+	var historyContents = []string{}
 	for _, item := range history {
 		historyContents = append(historyContents, item.Content)
 	}
@@ -74,6 +74,10 @@ func (a *App) UpdateHistory(newOrder []string) ([]utils.ClipboardItem, error) {
 	if clipboard.Init() != nil {
 		panic("failed to initialize clipboard")
 	}
-	clipboard.Write(clipboard.FmtText, []byte(items[0].Content))
+	if len((items)) > 0 {
+		clipboard.Write(clipboard.FmtText, []byte(items[0].Content))
+	} else {
+		clipboard.Write(clipboard.FmtText, []byte(""))
+	}
 	return items, nil
 }
