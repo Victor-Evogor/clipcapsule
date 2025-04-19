@@ -1,5 +1,11 @@
 # 📋 ClipCapsule
 
+<p align="center">
+  <img src="https://victor-evogor.github.io/clipcapsule/clipcapsule.gif" alt="Clipcapsule Preview" />
+</p>
+
+
+
 **ClipCapsule** is a minimalist clipboard manager for Linux, built with **Go** and **WailsJS**. It supercharges your productivity by allowing you to manage and switch clipboard entries using only keyboard shortcuts—no mouse or GUI required.
 
 > ⚠️ This is a **work-in-progress** project. Currently, the GUI must be open for shortcuts to work, but we're actively working on a background daemon to make the app run seamlessly without launching the interface.
