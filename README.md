@@ -103,10 +103,10 @@ sudo chmod a+r /dev/input/eventX
 
 - [x] Core clipboard logic
 - [x] Keyboard shortcut mapping
+- [X] Clipboard preview UI
 - [ ] Daemon mode (run in background without GUI)
 - [ ] Tray icon & preferences
 - [ ] Configurable shortcuts
-- [ ] Clipboard preview UI
 - [ ] Exclude sensitive entries (e.g., passwords)
 
 ---
